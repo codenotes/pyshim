@@ -21,3 +21,8 @@ When the renamied physim.exe is run, it will:
 So in short, it will enable you to "run" any python file as if it were an .exe without needing py2exe or some other, heavy, utility.
 
 
+#whodowhat
+
+This is a win64 exe that will investigate every process that has a TCP port open and (optionally) what DLLs it has loaded. 
+
+It is a fast, concise program to get the facts quickly.  It will print both PID and process name. And it is instant.  Also color coded (on windows 10, it uses ANSI capabilities). 
