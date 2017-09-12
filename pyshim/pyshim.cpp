@@ -138,6 +138,7 @@ int createProcessAndRedirOutput(const string exeName, vector<string> args)
 
 	while (c.running())// && std::getline(is, line) && !line.empty())
 	{
+		
 		std::getline(is, line);
 		std::getline(iserr, line_err);
 
@@ -147,7 +148,6 @@ int createProcessAndRedirOutput(const string exeName, vector<string> args)
 		if(!line.empty())
 			data.push_back(line);
 	}
-	
 
 	c.wait();
 
@@ -163,6 +163,90 @@ int createProcessAndRedirOutput(const string exeName, vector<string> args)
 
 	return c.exit_code();
 }
+
+
+//also works
+int createProcessAndRedirOutput2(const string exeName, vector<string> args)
+{
+	bp::ipstream is; //reading pipe-stream
+	bp::ipstream iserr; //reading pipe-stream
+	bp::child c(exeName, args, bp::std_out > is, bp::std_err > iserr);
+
+	std::vector<std::string> data, data_err;
+	std::string line, line_err;
+
+	while (c.running())// && std::getline(is, line) && !line.empty())
+	{
+
+		cout << "loop...\n";
+
+		//if (is.rdbuf()->in_avail()>0) 
+		if (is.peek() == EOF)
+			continue;
+		
+
+		std::string stdout_content{ std::istreambuf_iterator<char>(is),
+			std::istreambuf_iterator<char>() };
+		cout << "out:"<<stdout_content << endl;
+		
+
+
+//		std::string stderr_content{ std::istreambuf_iterator<char>(iserr),
+	//		std::istreambuf_iterator<char>() };
+
+
+		//cout << "err:"<<stderr_content << endl;
+	//	std::getline(is, line);
+		//std::getline(iserr, line_err);
+
+		
+	}
+	cout << "out of loop\n";
+	c.wait();
+	cout << "after wait...\n";
+
+	return c.exit_code();
+}
+
+//working
+int createProcessAndRedirOutputASIO(const string exeName, vector<string> args)
+{
+	boost::asio::io_service ios;
+	 //std::future<std::string> data2;
+	std::future<std::string> data1;
+
+	bp::ipstream ier;
+	bp::ipstream iout;
+
+	bp::child c(exeName, args, //set the input
+		bp::std_in.close(),
+		bp::std_err > ier,
+		bp::std_out > data1, // bp::null, //so it can be written without anything
+		//bp::std_out > iout,
+		ios);
+
+	
+	ios.run(); //this will actually block until the compiler is finished
+	
+	//auto err = data2.get();
+	auto stuff = data1.get();
+	
+	
+	//cout <<"stdout:"<< stuff << endl;
+	
+	//std::string stdout_content{ std::istreambuf_iterator<char>(ier),
+	//	std::istreambuf_iterator<char>() };
+
+	std::string stderr_content{ std::istreambuf_iterator<char>(ier),
+		std::istreambuf_iterator<char>() };
+
+	cout << "stderr:"<< stderr_content << endl;
+	cout << "stdout:" << stuff << endl;
+
+	return 0;
+
+}
+
 
 void testOfTests()
 {
@@ -220,7 +304,10 @@ int main(int argc, char**argv)
 	//cout << "sys call is:" << ss.str() << endl;
 //	int result = bp::system(ss.str());
 
-	return createProcessAndRedirOutput(pypath.string(),args);
+	//auto ret= createProcessAndRedirOutputASIO(pypath.string(),args);
+	auto ret = createProcessAndRedirOutput2(pypath.string(), args);
+	cout << "outa here\n";
+	return ret;
 	    
 }
 
