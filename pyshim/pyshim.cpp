@@ -181,9 +181,7 @@ int createProcessAndRedirOutput2(const string exeName, vector<string> args)
 		cout << "loop...\n";
 
 		//if (is.rdbuf()->in_avail()>0) 
-		if (is.peek() == EOF)
-			continue;
-		
+	
 
 		std::string stdout_content{ std::istreambuf_iterator<char>(is),
 			std::istreambuf_iterator<char>() };
