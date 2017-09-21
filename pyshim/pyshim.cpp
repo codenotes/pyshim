@@ -5,7 +5,7 @@
 
 DWORD enableVTMode()
 {
-	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE); //TODO: fix, this should be console handle not STD_OUTPUT
 	if (hOut == INVALID_HANDLE_VALUE)
 	{
 		return GetLastError();
@@ -303,7 +303,7 @@ int main(int argc, char**argv)
 //	int result = bp::system(ss.str());
 
 	//auto ret= createProcessAndRedirOutputASIO(pypath.string(),args);
-	auto ret = createProcessAndRedirOutput2(pypath.string(), args);
+	auto ret = createProcessAndRedirOutput(pypath.string(), args);
 	cout << "outa here\n";
 	return ret;
 	    
